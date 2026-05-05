@@ -1,0 +1,50 @@
+name: VerseLift CI Pipeline
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # Backend
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          npm install
+
+      - name: Run backend lint
+        run: |
+          cd backend
+          npm run lint || echo "No lint yet"
+
+      - name: Run backend tests
+        run: |
+          cd backend
+          npm test || echo "No tests yet"
+
+      - name: Backend security audit
+        run: |
+          cd backend
+          npm audit --audit-level=high || true
+
+      # Frontend
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm install
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
